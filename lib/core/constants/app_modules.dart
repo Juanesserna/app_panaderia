@@ -70,7 +70,7 @@ class NavItem {
 /// abre el bottom sheet con el resto de opciones (ver kDrawerItems).
 const List<NavItem> kBottomTabs = [
   NavItem(AppModule.dashboard, 'Inicio', Icons.home_outlined),
-  NavItem(AppModule.ventas, 'Ventas', Icons.storefront_outlined),
+  NavItem(AppModule.ventas, 'Ventas', Icons.shopping_bag_outlined),
   NavItem(AppModule.produccion, 'Producción', Icons.wb_sunny_outlined),
   NavItem(AppModule.insumos, 'Insumos', Icons.inventory_2_outlined),
 ];
