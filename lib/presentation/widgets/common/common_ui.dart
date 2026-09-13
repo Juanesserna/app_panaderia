@@ -122,15 +122,15 @@ class AppSearchField extends StatelessWidget {
     return Expanded(
       child: Container(
         height: 42,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: colors.surface2,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: colors.border),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(21),
+          border: Border.all(color: colors.accent.withOpacity(0.35)),
         ),
         child: Row(
           children: [
-            Icon(Icons.search, size: 18, color: colors.textMuted),
+            Icon(Icons.search, size: 18, color: colors.accent),
             const SizedBox(width: 8),
             Expanded(
               child: TextField(
@@ -140,7 +140,7 @@ class AppSearchField extends StatelessWidget {
                   isDense: true,
                   border: InputBorder.none,
                   hintText: placeholder,
-                  hintStyle: AppTextStyles.bodyRegular.copyWith(color: colors.textMuted),
+                  hintStyle: AppTextStyles.bodyRegular.copyWith(color: colors.accent),
                 ),
               ),
             ),
