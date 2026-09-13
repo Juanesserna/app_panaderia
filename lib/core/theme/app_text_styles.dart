@@ -17,6 +17,14 @@ class AppTextStyles {
   static final brandTitle = _outfit(14, FontWeight.w700); // "AlHorno"
   static final brandSubtitle = _outfit(12, FontWeight.w400); // nombre del módulo
 
+  // Pantallas de autenticación (login/registro): título grande con
+// tipografía serif para el acento de marca ("Bienvenido de vuelta").
+  static final authTitle = GoogleFonts.playfairDisplay(
+      fontSize: 28,
+      fontWeight: FontWeight.w600,
+      height: 1.2,
+     );
+
   // Texto general
   static final titleLg = _outfit(18, FontWeight.w700);
   static final titleMd = _outfit(16, FontWeight.w700);
