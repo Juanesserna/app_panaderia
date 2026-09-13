@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_modules.dart';
+import '../screens/productos/productos_screen.dart';
 import 'dashboard_page.dart';
 import 'ventas_page.dart';
 // import 'produccion_page.dart';
@@ -21,7 +22,7 @@ final Map<AppModule, WidgetBuilder> moduleRegistry = {
   // AppModule.compras: (context) => const ComprasPage(),
   // AppModule.proveedores: (context) => const ProveedoresPage(),
   // AppModule.categorias: (context) => const CategoriasPage(),
-  // AppModule.productos: (context) => const ProductosPage(),
+  AppModule.productos: (context) => const ProductosScreen(),
   // AppModule.usuarios: (context) => const UsuariosPage(),
   // AppModule.roles: (context) => const RolesPage(),
   // AppModule.inventario: (context) => const InventarioPage(),
@@ -34,5 +35,8 @@ final Map<AppModule, WidgetBuilder> moduleRegistry = {
 /// página registrada, para que la app nunca truene mientras el equipo
 /// va terminando cada sección.
 Widget placeholderPage(AppModule module) => Center(
-      child: Text('${module.label}\n(en construcción)', textAlign: TextAlign.center),
-    );
+  child: Text(
+    '${module.label}\n(en construcción)',
+    textAlign: TextAlign.center,
+  ),
+);
