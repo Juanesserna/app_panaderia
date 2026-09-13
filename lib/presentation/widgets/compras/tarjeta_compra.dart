@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/currency_format.dart';
 import '../../../data/models/modelo_compra.dart';
 
 class TarjetaCompra extends StatelessWidget {
   final ModeloCompra compra;
   final VoidCallback? onTap;
 
-  const TarjetaCompra({Key? key, required this.compra, this.onTap})
-    : super(key: key);
+  const TarjetaCompra({super.key, required this.compra, this.onTap});
 
   Color _obtenerColorEstado(EstadoCompra estado) {
     switch (estado) {
@@ -23,81 +25,82 @@ class TarjetaCompra extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     final colorEstado = _obtenerColorEstado(compra.estado);
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      "${compra.id} • ${compra.proveedor}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(compra.id, style: AppTextStyles.captionBold.copyWith(color: colors.accent)),
+                      Text(
+                        "${compra.fecha.day.toString().padLeft(2, '0')}/${compra.fecha.month.toString().padLeft(2, '0')}/${compra.fecha.year}",
+                        style: AppTextStyles.monoCaption.copyWith(color: colors.textMuted),
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorEstado.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      ModeloCompra.obtenerEtiquetaEstado(compra.estado),
-                      style: TextStyle(
-                        color: colorEstado,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  const SizedBox(height: 2),
+                  Text(
+                    compra.proveedor,
+                    style: AppTextStyles.bodyBold.copyWith(color: colors.text),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    compra.insumos,
+                    style: AppTextStyles.caption.copyWith(color: colors.textMuted),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                compra.insumos,
-                style: TextStyle(color: Colors.grey[700], fontSize: 13),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Divider(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "${compra.fecha.day.toString().padLeft(2, '0')}/${compra.fecha.month.toString().padLeft(2, '0')}/${compra.fecha.year}",
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            const SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '\$${formatCurrency(compra.total)}',
+                  style: AppTextStyles.monoBody.copyWith(fontWeight: FontWeight.bold, color: colors.text),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: colorEstado.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
                   ),
-                  Text(
-                    "\$${compra.total.toStringAsFixed(2)}",
-                    style: const TextStyle(
+                  child: Text(
+                    ModeloCompra.obtenerEtiquetaEstado(compra.estado),
+                    style: TextStyle(
+                      color: colorEstado,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black87,
                     ),
                   ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(width: 10),
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: colors.surface2,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: colors.border),
               ),
-            ],
-          ),
+              child: Icon(Icons.visibility_outlined, size: 16, color: colors.textMuted),
+            ),
+          ],
         ),
       ),
     );

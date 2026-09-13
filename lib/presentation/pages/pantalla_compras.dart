@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import '../../data/models/modelo_compra.dart';
 import '../widgets/compras/nueva_compra_sheet.dart';
+import '../widgets/compras/tarjeta_compra.dart';
+import '../widgets/compras/detalle_compra_sheet.dart';
+import '../widgets/compras/filtros_compras_sheet.dart';
+import '../widgets/shell/app_bottom_sheet.dart';
+import '../widgets/common/common_ui.dart';
 
 class PantallaCompras extends StatefulWidget {
-  const PantallaCompras({Key? key}) : super(key: key);
+  const PantallaCompras({super.key});
 
   @override
   State<PantallaCompras> createState() => _PantallaComprasState();
@@ -40,17 +46,37 @@ class _PantallaComprasState extends State<PantallaCompras> {
     ),
   ];
 
-  Color _obtenerColorEstado(EstadoCompra estado) {
-    switch (estado) {
-      case EstadoCompra.pagado:
-        return Colors.green;
-      case EstadoCompra.pendiente:
-        return Colors.orange;
-      case EstadoCompra.parcial:
-        return Colors.blue;
-      case EstadoCompra.cancelado:
-        return Colors.red;
-    }
+  void _abrirNuevaCompra() {
+    showAppBottomSheet(
+      context,
+      title: 'Nueva compra',
+      builder: (_) => NuevaCompraSheet(
+        onGuardar: (nuevaCompra) {
+          setState(() {
+            compras.insert(0, nuevaCompra);
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Compra ${nuevaCompra.id} registrada"),
+              backgroundColor: Colors.green,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _abrirFiltros() {
+    showAppBottomSheet(
+      context,
+      title: 'Filtros',
+      builder: (_) => FiltrosComprasSheet(
+        estadoSeleccionado: estadoSeleccionado,
+        onEstadoChanged: (nuevoEstado) {
+          setState(() => estadoSeleccionado = nuevoEstado);
+        },
+      ),
+    );
   }
 
   @override
@@ -58,8 +84,8 @@ class _PantallaComprasState extends State<PantallaCompras> {
     final listaFiltrada = compras.where((item) {
       final coincideBusqueda =
           item.proveedor.toLowerCase().contains(
-            consultaBusqueda.toLowerCase(),
-          ) ||
+                consultaBusqueda.toLowerCase(),
+              ) ||
           item.insumos.toLowerCase().contains(consultaBusqueda.toLowerCase()) ||
           item.id.toLowerCase().contains(consultaBusqueda.toLowerCase());
       final coincideEstado =
@@ -67,169 +93,99 @@ class _PantallaComprasState extends State<PantallaCompras> {
       return coincideBusqueda && coincideEstado;
     }).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Gestión de Compras"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => NuevaCompraSheet(
-                  onGuardar: (nuevaCompra) {
-                    setState(() {
-                      compras.insert(0, nuevaCompra);
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Compra ${nuevaCompra.id} registrada"),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: const Text("Gestión de Compras"),
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Buscar por proveedor o insumos...",
-                prefixIcon: const Icon(Icons.search),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onChanged: (val) => setState(() => consultaBusqueda = val),
-            ),
-            const SizedBox(height: 12),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  FilterChip(
-                    label: const Text("Todos"),
-                    selected: estadoSeleccionado == null,
-                    onSelected: (_) =>
-                        setState(() => estadoSeleccionado = null),
-                  ),
-                  const SizedBox(width: 8),
-                  ...EstadoCompra.values.map((estado) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: FilterChip(
-                        label: Text(ModeloCompra.obtenerEtiquetaEstado(estado)),
-                        selected: estadoSeleccionado == estado,
-                        onSelected: (seleccionado) {
-                          setState(() {
-                            estadoSeleccionado = seleccionado ? estado : null;
-                          });
-                        },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppSearchField(
+                        placeholder: 'Buscar por proveedor o insumos...',
+                        onChanged: (val) => setState(() => consultaBusqueda = val),
                       ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: listaFiltrada.isEmpty
-                  ? const Center(child: Text("No se encontraron registros."))
-                  : ListView.builder(
-                      itemCount: listaFiltrada.length,
-                      itemBuilder: (context, index) {
-                        final item = listaFiltrada[index];
-                        final color = _obtenerColorEstado(item.estado);
-
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${item.id} • ${item.proveedor}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 3,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: color.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        ModeloCompra.obtenerEtiquetaEstado(
-                                          item.estado,
-                                        ),
-                                        style: TextStyle(
-                                          color: color,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  item.insumos,
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const Divider(height: 20),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${item.fecha.day}/${item.fecha.month}/${item.fecha.year}",
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Text(
-                                      "\$${item.total.toStringAsFixed(2)}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
                     ),
+                    const SizedBox(width: 8),
+                    ActionBtn(
+                      label: 'Filtros',
+                      icon: Icons.filter_list,
+                      onTap: _abrirFiltros,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: listaFiltrada.isEmpty
+                      ? const Center(child: Text("No se encontraron registros."))
+                      : ListView.builder(
+                          itemCount: listaFiltrada.length,
+                          itemBuilder: (context, index) {
+                            final item = listaFiltrada[index];
+                            return TarjetaCompra(
+                              compra: item,
+                              onTap: () => showAppBottomSheet(
+                                context,
+                                title: 'Detalle Compra',
+                                builder: (_) => DetalleCompraSheet(
+                                  compra: item,
+                                  onActualizarEstado: (compraActualizada) {
+                                    setState(() {
+                                      final idx = compras.indexWhere((c) => c.id == compraActualizada.id);
+                                      if (idx != -1) {
+                                        compras[idx] = compraActualizada;
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
-          ],
+          ),
+        ),
+        Positioned(
+          right: 16,
+          bottom: 24,
+          child: _NuevaCompraFab(onTap: _abrirNuevaCompra),
+        ),
+      ],
+    );
+  }
+}
+
+class _NuevaCompraFab extends StatelessWidget {
+  final VoidCallback onTap;
+  const _NuevaCompraFab({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    return Material(
+      color: colors.accent,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 4,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add, size: 18, color: colors.accentFg),
+              const SizedBox(width: 8),
+              Text('Nueva Compra', style: TextStyle(color: colors.accentFg, fontWeight: FontWeight.w600, fontSize: 14)),
+            ],
+          ),
         ),
       ),
     );

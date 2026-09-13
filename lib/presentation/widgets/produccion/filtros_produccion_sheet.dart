@@ -98,7 +98,10 @@ class _ChipGroup extends StatelessWidget {
       children: [
         Text(
           label.toUpperCase(),
-          style: AppTextStyles.tiny.copyWith(color: colors.textMuted, letterSpacing: 0.4),
+          style: AppTextStyles.tiny.copyWith(
+            color: colors.textMuted,
+            letterSpacing: 0.4,
+          ),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -110,16 +113,22 @@ class _ChipGroup extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
               onTap: () => onSelected(opt),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: activo ? colors.accent : Colors.transparent,
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: activo ? colors.accent : colors.border),
+                  border: Border.all(
+                    color: activo ? colors.accent : colors.border,
+                  ),
                 ),
                 child: Text(
                   opt,
-                  style: AppTextStyles.bodyMedium
-                      .copyWith(color: activo ? colors.accentFg : colors.text),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: activo ? colors.accentFg : colors.text,
+                  ),
                 ),
               ),
             );
