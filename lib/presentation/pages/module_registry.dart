@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_modules.dart';
 import 'dashboard_page.dart';
 import 'ventas_page.dart';
-// import 'produccion_page.dart';
+import 'produccion_page.dart';
 // ...cada compañero agrega aquí el import de su página
 
 /// ÚNICO lugar del proyecto donde se conecta cada [AppModule] con su
@@ -16,7 +16,7 @@ import 'ventas_page.dart';
 final Map<AppModule, WidgetBuilder> moduleRegistry = {
   AppModule.dashboard: (context) => const DashboardPage(),
   AppModule.ventas: (context) => const VentasPage(),
-  // AppModule.produccion: (context) => const ProduccionPage(),
+  AppModule.produccion: (context) => const ProduccionPage(),
   // AppModule.insumos: (context) => const InsumosPage(),
   // AppModule.compras: (context) => const ComprasPage(),
   // AppModule.proveedores: (context) => const ProveedoresPage(),

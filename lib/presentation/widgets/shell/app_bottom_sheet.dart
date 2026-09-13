@@ -47,7 +47,7 @@ Future<T?> showAppBottomSheet<T>(
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              if (title != null)
+              if (title != null) ...[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 14, 12, 0),
                   child: Row(
@@ -64,8 +64,11 @@ Future<T?> showAppBottomSheet<T>(
                       ),
                     ],
                   ),
-                )
-              else
+                ),
+                const SizedBox(height: 10),
+                const AppDivider(),
+                const SizedBox(height: 4),
+              ] else
                 const SizedBox(height: 4),
               Flexible(child: builder(context)),
             ],
