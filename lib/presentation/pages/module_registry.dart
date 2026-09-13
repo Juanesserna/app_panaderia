@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_modules.dart';
 import '../screens/productos/productos_screen.dart';
-import '../screens/categorias/categorias_screen.dart';
-import 'dashboard_page.dart';
+//import '../screens/cisas/cisas_screen.dart';
+import 'pantalla_dashboard.dart';
+import 'pantalla_compras.dart';
 import 'ventas_page.dart';
 import 'produccion_page.dart';
+import 'pantalla_compras.dart';
 // ...cada compañero agrega aquí el import de su página
 
 /// ÚNICO lugar del proyecto donde se conecta cada [AppModule] con su
@@ -16,13 +18,13 @@ import 'produccion_page.dart';
 /// AppShell se encarga solo de mostrarla: no hay que tocar nada más
 /// (ni Header, ni BottomNav, ni navegación).
 final Map<AppModule, WidgetBuilder> moduleRegistry = {
-  AppModule.dashboard: (context) => const DashboardPage(),
+  AppModule.dashboard: (context) => const PantallaDashboard(),
   AppModule.ventas: (context) => const VentasPage(),
   AppModule.produccion: (context) => const ProduccionPage(),
   // AppModule.insumos: (context) => const InsumosPage(),
-  // AppModule.compras: (context) => const ComprasPage(),
+  AppModule.compras: (context) => const PantallaCompras(),
   // AppModule.proveedores: (context) => const ProveedoresPage(),
-  AppModule.categorias: (context) => CategoriasScreen(),
+  // AppModule.cisas: (context) => CisasScreen(),
   AppModule.productos: (context) => const ProductosScreen(),
   // AppModule.usuarios: (context) => const UsuariosPage(),
   // AppModule.roles: (context) => const RolesPage(),
