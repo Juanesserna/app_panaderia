@@ -7,12 +7,14 @@ import 'pantalla_dashboard.dart';
 import 'pantalla_compras.dart';
 import 'ventas_page.dart';
 import 'produccion_page.dart';
-import 'pantalla_compras.dart';
+import 'insumos_page.dart';
+import 'proveedores_page.dart';
+import 'categorias_page.dart';
 // ...cada compañero agrega aquí el import de su página
 
 /// ÚNICO lugar del proyecto donde se conecta cada [AppModule] con su
 /// pantalla real. Flujo para el equipo cuando terminan un módulo:
-///   1. Crear la página en presentation/pages/<modulo>_page.dart
+///   1. Crear la página en presentation/pages/<modulo_page.dart
 ///      (un widget simple, sin Scaffold/Header/BottomNav propios).
 ///   2. Importarla arriba.
 ///   3. Agregar/reemplazar su entrada en el mapa de abajo.
@@ -22,9 +24,10 @@ final Map<AppModule, WidgetBuilder> moduleRegistry = {
   AppModule.dashboard: (context) => const PantallaDashboard(),
   AppModule.ventas: (context) => const VentasPage(),
   AppModule.produccion: (context) => const ProduccionPage(),
-  // AppModule.insumos: (context) => const InsumosPage(),
+  AppModule.insumos: (context) => const InsumosPage(),
   AppModule.compras: (context) => const PantallaCompras(),
-  // AppModule.proveedores: (context) => const ProveedoresPage(),
+  AppModule.proveedores: (context) => const ProveedoresPage(),
+  AppModule.categorias: (context) => const CategoriasPage(),
   // AppModule.cisas: (context) => CisasScreen(),
   AppModule.productos: (context) => const ProductosScreen(),
   AppModule.usuarios: (context) => const UsuariosScreen(),
