@@ -105,10 +105,28 @@ class _NuevoUsuarioSheetState extends State<NuevoUsuarioSheet> {
                     icon: Icons.add,
                     variant: ActionBtnVariant.accent,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Próximamente')),
-                      );
+                    if (_nitCtrl.text.trim().isEmpty ||
+                    _nombreCtrl.text.trim().isEmpty ||
+                    _emailCtrl.text.trim().isEmpty ||
+                    _telefonoCtrl.text.trim().isEmpty ||
+                    _rol == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                   content: Text('Completa los campos obligatorios'),
+                 ),
+              );
+                 return;
+                }
+                final nuevoUsuario = Usuario(
+                nit: _nitCtrl.text.trim(),
+                nombre: _nombreCtrl.text.trim(),
+                email: _emailCtrl.text.trim(),
+                telefono: _telefonoCtrl.text.trim(),
+                rol: _rol!,
+                estado: _estado,
+              );
+
+                       Navigator.of(context).pop(nuevoUsuario);
                     },
                   ),
                 ),

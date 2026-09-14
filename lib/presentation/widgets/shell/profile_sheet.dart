@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'app_bottom_sheet.dart';
+import '../../pages/login_page.dart';
 
 /// Abre el bottom sheet de perfil. Los datos son estáticos por ahora (aún
 /// no hay backend); cuando exista un authProvider, reemplazar los valores
@@ -50,12 +51,19 @@ class _ProfileSheetContent extends StatelessWidget {
           const AppDivider(),
           const SizedBox(height: 8),
           _ProfileTile(
-            icon: Icons.logout,
-            label: 'Cerrar sesión',
-            color: colors.danger,
-            bold: true,
-            onTap: () {},
-          ),
+           icon: Icons.logout,
+           label: 'Cerrar sesión',
+           color: colors.danger,
+           bold: true,
+           onTap: () {
+              final navigator = Navigator.of(context);
+              navigator.pop();
+              navigator.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const LoginPage()),
+              (route) => false,
+                );
+             },
+           ),
         ],
       ),
     );
