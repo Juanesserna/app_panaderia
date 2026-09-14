@@ -137,12 +137,24 @@ class _UsuariosScreenState extends State<UsuariosScreen> {
           right: 16,
           bottom: 10,
           child: _NuevoUsuarioFab(
-            onTap: () {
-              showAppBottomSheet(
-                context,
-                title: 'Nuevo usuario',
-                builder: (_) => const NuevoUsuarioSheet(),
-              );
+            onTap: () async {
+            final nuevoUsuario = await showAppBottomSheet<Usuario>(
+            context,
+            title: 'Nuevo usuario',
+            builder: (_) => const NuevoUsuarioSheet(),
+           );
+
+           if (nuevoUsuario != null && mounted) {
+           setState(() {
+           _usuarios.add(nuevoUsuario);
+          });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                 const SnackBar(
+                 content: Text('Usuario creado correctamente'),
+                 ),
+               );
+              }
             },
           ),
         ),
