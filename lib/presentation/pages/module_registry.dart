@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:panaderia/presentation/screens/usuarios/usuarios_screen.dart';
 import '../../core/constants/app_modules.dart';
 import '../screens/productos/productos_screen.dart';
 //import '../screens/cisas/cisas_screen.dart';
@@ -29,7 +30,7 @@ final Map<AppModule, WidgetBuilder> moduleRegistry = {
   AppModule.categorias: (context) => const CategoriasPage(),
   // AppModule.cisas: (context) => CisasScreen(),
   AppModule.productos: (context) => const ProductosScreen(),
-  // AppModule.usuarios: (context) => const UsuariosPage(),
+  AppModule.usuarios: (context) => const UsuariosScreen(),
   // AppModule.roles: (context) => const RolesPage(),
   // AppModule.inventario: (context) => const InventarioPage(),
   // AppModule.pedidos: (context) => const PedidosPage(),
