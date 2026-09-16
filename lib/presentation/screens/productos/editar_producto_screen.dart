@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../widgets/common/common_ui.dart';
-import '../../widgets/productos/producto_action_icon.dart';
-import '../../widgets/productos/producto_status_badge.dart';
 import '../../widgets/productos/confirmar_eliminar_dialog.dart';
-import '../../widgets/productos/producto_tile.dart';
 import '../../widgets/productos/producto_form_fields.dart';
+import '../../widgets/productos/producto_status_badge.dart';
+import '../../widgets/productos/producto_tile.dart';
 
 /// Pantalla de formulario para editar un producto.
 class EditarProductoScreen extends StatefulWidget {
@@ -132,49 +131,95 @@ class _EditarProductoScreenState extends State<EditarProductoScreen> {
         Text('Insumos necesarios para la elaboración de este producto', style: AppTextStyles.caption.copyWith(color: colors.textMuted)),
         const SizedBox(height: 12),
         ...insumos.map((i) {
-          return Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: colors.border)),
-            margin: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(text: '${i['codigo']} — ', style: AppTextStyles.bodyBold.copyWith(color: colors.accent, fontSize: 14)),
-                            TextSpan(text: i['nombre'] as String, style: AppTextStyles.bodyBold.copyWith(color: colors.text, fontSize: 14)),
-                          ],
+          final insumoNombre = i['nombre'] as String;
+          final insumoDisplay = '${i['codigo']} — $insumoNombre';
+          return InkWell(
+            onTap: () => _showInsumoActionsSheet(context, colors, insumoDisplay, insumoNombre),
+            borderRadius: BorderRadius.circular(12),
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: colors.border)),
+              margin: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(text: '${i['codigo']} — ', style: AppTextStyles.bodyBold.copyWith(color: colors.accent, fontSize: 14)),
+                              TextSpan(text: insumoNombre, style: AppTextStyles.bodyBold.copyWith(color: colors.text, fontSize: 14)),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text('${i['cantidad']} ${i['unidad']}', style: AppTextStyles.caption.copyWith(color: colors.textMuted)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ProductoActionIcon(icon: Icons.edit_outlined, color: colors.accent, onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Próximamente')));
-                }),
-                const SizedBox(width: 4),
-                ProductoActionIcon(icon: Icons.delete_outline, color: colors.danger, onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => ConfirmarEliminarDialog(
-                      title: 'Eliminar insumo',
-                      itemName: i['nombre'] as String,
-                      warningText: 'Este insumo será eliminado permanentemente del sistema.',
+                        const SizedBox(height: 3),
+                        Text('${i['cantidad']} ${i['unidad']}', style: AppTextStyles.caption.copyWith(color: colors.textMuted)),
+                      ],
                     ),
-                  );
-                }),
-              ],
+                  ),
+                ],
+              ),
             ),
           );
         }),
       ],
+    );
+  }
+
+  void _showInsumoActionsSheet(BuildContext context, AppColors colors, String insumoDisplay, String insumoNombre) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(color: colors.textMuted.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2)),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                insumoDisplay,
+                style: AppTextStyles.bodyBold.copyWith(fontSize: 16, color: colors.text),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Icon(Icons.edit_outlined, color: colors.accent, size: 22),
+                title: Text('Editar', style: AppTextStyles.bodyRegular.copyWith(fontSize: 15, color: colors.text)),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Próximamente')));
+                },
+              ),
+              Divider(height: 1, color: colors.border),
+              ListTile(
+                leading: Icon(Icons.delete_outline, color: colors.danger, size: 22),
+                title: Text('Eliminar', style: AppTextStyles.bodyRegular.copyWith(fontSize: 15, color: colors.danger)),
+                onTap: () {
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (_) => ConfirmarEliminarDialog(
+                      title: 'Eliminar insumo',
+                      itemName: insumoNombre,
+                      warningText: 'Este insumo será eliminado permanentemente del sistema.',
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
