@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../common/common_ui.dart';
-import 'producto_tile.dart';
+import 'confirmar_eliminar_dialog.dart';
 import 'producto_status_badge.dart';
+import 'producto_tile.dart';
+import '../../screens/productos/editar_producto_screen.dart';
 
 /// Contenido del bottom sheet de detalle de un producto.
 ///
@@ -141,12 +143,50 @@ class DetalleProductoSheet extends StatelessWidget {
               dotColor: producto.estado == EstadoProducto.activo ? colors.success : colors.danger,
             ),
             const SizedBox(height: 24),
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(child: ActionBtn(label: 'Editar', onTap: () {})),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ActionBtn(label: 'Cambiar estado', variant: ActionBtnVariant.accent, onTap: () {}),
+                _DetailActionBtn(
+                  label: 'Editar',
+                  icon: Icons.edit_outlined,
+                  backgroundColor: colors.surface2,
+                  foregroundColor: colors.accent,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => EditarProductoScreen(producto: producto)),
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                _DetailActionBtn(
+                  label: producto.estado == EstadoProducto.activo ? 'Cambiar a Inactivo' : 'Cambiar a Activo',
+                  backgroundColor: colors.accent,
+                  foregroundColor: colors.accentFg,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Próximamente')),
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                _DetailActionBtn(
+                  label: 'Eliminar producto',
+                  icon: Icons.delete_outline,
+                  backgroundColor: colors.dangerBg,
+                  foregroundColor: colors.danger,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      builder: (_) => ConfirmarEliminarDialog(
+                        title: 'Eliminar producto',
+                        itemName: producto.nombre,
+                        warningText: 'Este producto será eliminado permanentemente del sistema.',
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -193,6 +233,57 @@ class DetalleProductoSheet extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _DetailActionBtn extends StatelessWidget {
+  final String label;
+  final IconData? icon;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final VoidCallback? onTap;
+
+  const _DetailActionBtn({
+    required this.label,
+    this.icon,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(30),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(30),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 16, color: foregroundColor),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                label,
+                style: AppTextStyles.captionBold.copyWith(
+                  color: foregroundColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

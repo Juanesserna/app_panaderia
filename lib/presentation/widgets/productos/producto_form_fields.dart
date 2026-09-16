@@ -26,7 +26,7 @@ class ProductoFormFields extends StatefulWidget {
     required this.minProdCtrl,
     required this.maxProdCtrl,
     required this.imagenCtrl,
-    this.initialCategoria = 'Panadería',
+    this.initialCategoria = 'Bollería',
     this.initialActivo = true,
   });
 
@@ -35,9 +35,9 @@ class ProductoFormFields extends StatefulWidget {
 }
 
 class _ProductoFormFieldsState extends State<ProductoFormFields> {
-  String _categoria = 'Panadería';
+  String _categoria = 'Bollería';
   bool _activo = true;
-  final _categorias = ['Panadería', 'Repostería', 'Snacks'];
+  final _categorias = ['Bollería', 'Panes', 'Tortas'];
 
   @override
   void initState() {
