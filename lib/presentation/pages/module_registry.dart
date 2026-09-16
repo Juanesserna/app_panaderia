@@ -10,6 +10,7 @@ import 'produccion_page.dart';
 import 'insumos_page.dart';
 import 'proveedores_page.dart';
 import 'categorias_page.dart';
+import 'roles_page.dart';
 // ...cada compañero agrega aquí el import de su página
 
 /// ÚNICO lugar del proyecto donde se conecta cada [AppModule] con su
@@ -31,7 +32,7 @@ final Map<AppModule, WidgetBuilder> moduleRegistry = {
   // AppModule.cisas: (context) => CisasScreen(),
   AppModule.productos: (context) => const ProductosScreen(),
   AppModule.usuarios: (context) => const UsuariosScreen(),
-  // AppModule.roles: (context) => const RolesPage(),
+  AppModule.roles: (context) => const RolesPage(),
   // AppModule.inventario: (context) => const InventarioPage(),
   // AppModule.pedidos: (context) => const PedidosPage(),
   // AppModule.reportes: (context) => const ReportesPage(),
