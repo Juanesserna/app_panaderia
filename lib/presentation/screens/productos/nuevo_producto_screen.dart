@@ -62,7 +62,7 @@ class _NuevoProductoScreenState extends State<NuevoProductoScreen> {
               minProdCtrl: _minProdCtrl,
               maxProdCtrl: _maxProdCtrl,
               imagenCtrl: _imagenCtrl,
-              initialCategoria: 'Panadería',
+              initialCategoria: 'Bollería',
               initialActivo: true,
             ),
             const SizedBox(height: 24),
