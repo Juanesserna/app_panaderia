@@ -5,7 +5,6 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../widgets/common/common_ui.dart';
 import '../../widgets/shell/app_bottom_sheet.dart';
 import '../../widgets/productos/detalle_producto_sheet.dart';
-import '../../widgets/productos/distribucion_productos.dart';
 import '../../widgets/productos/producto_tile.dart';
 import '../../widgets/productos/producto_status_badge.dart';
 import '../productos/nuevo_producto_screen.dart';
@@ -46,8 +45,6 @@ class ProductosScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const DistribucionProductos(),
-              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -79,20 +76,6 @@ class ProductosScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const NuevoProductoScreen()),
-                        );
-                      },
-                      child: Text(
-                        '+ Nuevo',
-                        style: AppTextStyles.bodyBold.copyWith(
-                          color: colors.accent,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -118,6 +101,18 @@ class ProductosScreen extends ConsumerWidget {
                 );
               }),
             ],
+          ),
+        ),
+        Positioned(
+          right: 16,
+          bottom: 24,
+          child: _NuevoProductoFab(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NuevoProductoScreen()),
+              );
+            },
           ),
         ),
       ],
@@ -187,6 +182,43 @@ final _productos = [
     imagenUrl: 'https://loremflickr.com/400/400/blueberry,muffin',
   ),
 ];
+
+class _NuevoProductoFab extends StatelessWidget {
+  final VoidCallback onTap;
+  const _NuevoProductoFab({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    return Material(
+      color: colors.accent,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 4,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add, size: 18, color: colors.accentFg),
+              const SizedBox(width: 8),
+              Text(
+                'Nuevo producto',
+                style: TextStyle(
+                  color: colors.accentFg,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _StatCard extends StatelessWidget {
   final String label;
