@@ -24,16 +24,43 @@ final catalogoProductosProvider = Provider<List<ProductoCatalogo>>(
 
 final ventasBusquedaProvider = StateProvider<String>((ref) => '');
 
+// ---------- Filtros avanzados (FiltrosVentasSheet) ----------
+
+final filtroEstadosProvider = StateProvider<Set<EstadoVenta>>((ref) => {});
+final filtroMetodosProvider = StateProvider<Set<MetodoPago>>((ref) => {});
+final filtroCanalesProvider = StateProvider<Set<CanalVenta>>((ref) => {});
+final filtroIdProvider = StateProvider<String>((ref) => '');
+
+/// true si hay algún filtro avanzado activo (para mostrar un badge, etc.)
+final hayFiltrosActivosProvider = Provider<bool>((ref) {
+  return ref.watch(filtroEstadosProvider).isNotEmpty ||
+      ref.watch(filtroMetodosProvider).isNotEmpty ||
+      ref.watch(filtroCanalesProvider).isNotEmpty ||
+      ref.watch(filtroIdProvider).trim().isNotEmpty;
+});
+
 /// Ventas filtradas por el buscador (id, cliente o usuario) — el mismo
-/// criterio que usa `filtered` en la web. Los filtros avanzados de
-/// FiltrosVentasSheet se pueden combinar aquí más adelante.
+/// criterio que usa `filtered` en la web — combinado con los filtros
+/// avanzados de FiltrosVentasSheet (estado, método de pago, canal, id).
 final ventasFiltradasProvider = Provider<List<Venta>>((ref) {
   final ventas = ref.watch(ventasProvider);
   final busqueda = ref.watch(ventasBusquedaProvider).trim().toLowerCase();
-  if (busqueda.isEmpty) return ventas;
+  final estados = ref.watch(filtroEstadosProvider);
+  final metodos = ref.watch(filtroMetodosProvider);
+  final canales = ref.watch(filtroCanalesProvider);
+  final idFiltro = ref.watch(filtroIdProvider).trim().toLowerCase();
+
   return ventas.where((v) {
-    final cliente = (v.cliente ?? v.usuario).toLowerCase();
-    return v.id.toLowerCase().contains(busqueda) || cliente.contains(busqueda);
+    if (busqueda.isNotEmpty) {
+      final cliente = (v.cliente ?? v.usuario).toLowerCase();
+      final coincideBusqueda = v.id.toLowerCase().contains(busqueda) || cliente.contains(busqueda);
+      if (!coincideBusqueda) return false;
+    }
+    if (idFiltro.isNotEmpty && !v.id.toLowerCase().contains(idFiltro)) return false;
+    if (estados.isNotEmpty && !estados.contains(v.estado)) return false;
+    if (metodos.isNotEmpty && (v.metodo == null || !metodos.contains(v.metodo))) return false;
+    if (canales.isNotEmpty && !canales.contains(v.canal)) return false;
+    return true;
   }).toList();
 });
 
@@ -63,7 +90,6 @@ class VentasNotifier extends StateNotifier<List<Venta>> {
     ];
   }
 }
-
 
 // ---------- Pagos (comprobantes por cupo) ----------
 
