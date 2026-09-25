@@ -41,10 +41,17 @@ class TarjetaCompra extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(compra.id, style: AppTextStyles.captionBold.copyWith(color: colors.accent)),
+                      Text(
+                        compra.id,
+                        style: AppTextStyles.captionBold.copyWith(
+                          color: colors.accent,
+                        ),
+                      ),
                       Text(
                         "${compra.fecha.day.toString().padLeft(2, '0')}/${compra.fecha.month.toString().padLeft(2, '0')}/${compra.fecha.year}",
-                        style: AppTextStyles.monoCaption.copyWith(color: colors.textMuted),
+                        style: AppTextStyles.monoCaption.copyWith(
+                          color: colors.textMuted,
+                        ),
                       ),
                     ],
                   ),
@@ -54,9 +61,13 @@ class TarjetaCompra extends StatelessWidget {
                     style: AppTextStyles.bodyBold.copyWith(color: colors.text),
                     overflow: TextOverflow.ellipsis,
                   ),
+                  // Antes: compra.insumos (String). Ahora es un resumen
+                  // calculado a partir de compra.items.
                   Text(
-                    compra.insumos,
-                    style: AppTextStyles.caption.copyWith(color: colors.textMuted),
+                    compra.resumenInsumos,
+                    style: AppTextStyles.caption.copyWith(
+                      color: colors.textMuted,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -69,11 +80,17 @@ class TarjetaCompra extends StatelessWidget {
               children: [
                 Text(
                   '\$${formatCurrency(compra.total)}',
-                  style: AppTextStyles.monoBody.copyWith(fontWeight: FontWeight.bold, color: colors.text),
+                  style: AppTextStyles.monoBody.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.text,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: colorEstado.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -98,7 +115,11 @@ class TarjetaCompra extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: colors.border),
               ),
-              child: Icon(Icons.visibility_outlined, size: 16, color: colors.textMuted),
+              child: Icon(
+                Icons.visibility_outlined,
+                size: 16,
+                color: colors.textMuted,
+              ),
             ),
           ],
         ),

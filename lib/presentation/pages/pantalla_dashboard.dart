@@ -104,7 +104,7 @@ class _PantallaDashboardState extends State<PantallaDashboard> {
               children: const [
                 Expanded(
                   child: TarjetaKPI(
-                    titulo: "Total ventas",
+                    titulo: "Total ventas del mes",
                     valor: "\$319,330",
                     subtitulo: "Actualizado hace 2 min",
                     icono: Icons.trending_up,
@@ -113,7 +113,7 @@ class _PantallaDashboardState extends State<PantallaDashboard> {
                 SizedBox(width: 12),
                 Expanded(
                   child: TarjetaKPI(
-                    titulo: "Pedidos activos",
+                    titulo: "Pedidos Activos",
                     valor: "127",
                     subtitulo: "34 listos para entrega",
                     icono: Icons.shopping_cart,
@@ -127,21 +127,21 @@ class _PantallaDashboardState extends State<PantallaDashboard> {
               children: const [
                 Expanded(
                   child: TarjetaKPI(
-                    titulo: "Insumos críticos",
-                    valor: "4 items",
-                    subtitulo: "Requieren reabastecimiento",
-                    icono: Icons.warning_amber_rounded,
-                    colorAcento: Colors.redAccent,
+                    titulo: "Compras del período",
+                    valor: "\$140,745",
+                    subtitulo: "Periodo seleccionado",
+                    icono: Icons.shopping_bag_outlined,
+                    colorAcento: Colors.deepOrange,
                   ),
                 ),
                 SizedBox(width: 12),
                 Expanded(
                   child: TarjetaKPI(
-                    titulo: "Producción hoy",
-                    valor: "85%",
-                    subtitulo: "Meta: 1,200 unidades",
-                    icono: Icons.precision_manufacturing,
-                    colorAcento: Colors.blue,
+                    titulo: "Pedidos recientes",
+                    valor: "6",
+                    subtitulo: "Últimos registrados",
+                    icono: Icons.receipt_long_outlined,
+                    colorAcento: Colors.indigo,
                   ),
                 ),
               ],
