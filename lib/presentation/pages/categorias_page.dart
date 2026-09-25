@@ -8,7 +8,6 @@ import '../widgets/shell/app_bottom_sheet.dart';
 import '../widgets/categorias/categoria_form_sheet.dart';
 import '../widgets/categorias/categoria_tile.dart';
 import '../widgets/categorias/detalle_categoria_sheet.dart';
-import '../widgets/categorias/distribucion_categorias.dart';
 import '../widgets/categorias/filtros_categorias_sheet.dart';
 
 /// Página de contenido del módulo Categorías. Sigue el patrón del resto
@@ -24,10 +23,12 @@ class CategoriasPage extends ConsumerWidget {
     final filtros = ref.watch(filtrosCategoriasProvider);
     final colors = Theme.of(context).extension<AppColors>()!;
 
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 32),
+    return Stack(
       children: [
-        const SizedBox(height: 12),
+        ListView(
+          padding: const EdgeInsets.only(bottom: 32),
+          children: [
+            const SizedBox(height: 12),
         SizedBox(
           height: 88,
           child: ListView(
@@ -44,8 +45,6 @@ class CategoriasPage extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        const DistribucionCategorias(),
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -73,7 +72,6 @@ class CategoriasPage extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
@@ -93,26 +91,6 @@ class CategoriasPage extends ConsumerWidget {
                   ],
                 ],
               ),
-              InkWell(
-                onTap: () => showAppBottomSheet(
-                  context,
-                  title: 'Nueva categoría',
-                  builder: (_) => const CategoriaFormSheet(),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add, size: 15, color: colors.accent),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Nueva',
-                      style: AppTextStyles.captionBold.copyWith(
-                        color: colors.accent,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
@@ -128,6 +106,19 @@ class CategoriasPage extends ConsumerWidget {
               onTap: () => _abrirDetalle(context, categoria.id),
               onView: () => _abrirDetalle(context, categoria.id),
             ),
+          ],
+        ),
+        Positioned(
+          right: 16,
+          bottom: 24,
+          child: _NuevaCategoriaFab(
+            onTap: () => showAppBottomSheet(
+              context,
+              title: 'Nueva categoría',
+              builder: (_) => const CategoriaFormSheet(),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -186,6 +177,43 @@ class _KpiCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _NuevaCategoriaFab extends StatelessWidget {
+  final VoidCallback onTap;
+  const _NuevaCategoriaFab({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    return Material(
+      color: colors.accent,
+      borderRadius: BorderRadius.circular(18),
+      elevation: 4,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add, size: 18, color: colors.accentFg),
+              const SizedBox(width: 8),
+              Text(
+                'Nueva categoría',
+                style: TextStyle(
+                  color: colors.accentFg,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
