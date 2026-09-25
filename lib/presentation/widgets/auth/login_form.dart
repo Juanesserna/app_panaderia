@@ -23,15 +23,32 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  // Credenciales válidas mientras no haya backend real.
+  static const _correoValido = 'test@gmail.com';
+  static const _passwordValida = '123456';
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool obscurePassword = true;
+  String? _errorText;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _intentarLogin() {
+    final correo = _emailController.text.trim().toLowerCase();
+    final password = _passwordController.text;
+
+    if (correo == _correoValido && password == _passwordValida) {
+      setState(() => _errorText = null);
+      widget.onLoginSuccess();
+    } else {
+      setState(() => _errorText = 'Correo o contraseña incorrectos');
+    }
   }
 
   @override
@@ -67,6 +84,13 @@ class _LoginFormState extends State<LoginForm> {
                 setState(() => obscurePassword = !obscurePassword),
           ),
         ),
+        if (_errorText != null) ...[
+          const SizedBox(height: 10),
+          Text(
+            _errorText!,
+            style: AppTextStyles.bodyMedium.copyWith(color: colors.danger, fontSize: 13),
+          ),
+        ],
         const SizedBox(height: 8),
         Align(
           alignment: Alignment.centerRight,
@@ -87,7 +111,7 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 14),
         PrimaryButton(
           label: 'INICIAR SESIÓN',
-          onPressed: widget.onLoginSuccess,
+          onPressed: _intentarLogin,
         ),
         const SizedBox(height: 18),
         Center(
