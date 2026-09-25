@@ -23,7 +23,22 @@ class _PantallaComprasState extends State<PantallaCompras> {
     ModeloCompra(
       id: "COM-001",
       proveedor: "Distribuidora Riogrande SAS",
-      insumos: "Harina de trigo x50kg, Levadura x10kg",
+      items: [
+        ItemCompra(
+          insumo: "Harina de trigo",
+          cantidad: 50,
+          unidad: "kg",
+          valorUnitario: 7000,
+          lote: LoteCompra(numero: "LOTE-MT001", cantidadDisponible: 50),
+        ),
+        ItemCompra(
+          insumo: "Levadura",
+          cantidad: 10,
+          unidad: "kg",
+          valorUnitario: 10000,
+          lote: LoteCompra(numero: "LOTE-MT002", cantidadDisponible: 10),
+        ),
+      ],
       total: 450000.0,
       estado: EstadoCompra.pagado,
       fecha: DateTime.now().subtract(const Duration(days: 1)),
@@ -31,7 +46,15 @@ class _PantallaComprasState extends State<PantallaCompras> {
     ModeloCompra(
       id: "COM-002",
       proveedor: "Industria Nacional de Gaseosas",
-      insumos: "Bebidas variadas x5 cajas",
+      items: [
+        ItemCompra(
+          insumo: "Bebidas variadas",
+          cantidad: 5,
+          unidad: "cajas",
+          valorUnitario: 36000,
+          lote: LoteCompra(numero: "LOTE-MT003", cantidadDisponible: 5),
+        ),
+      ],
       total: 180000.0,
       estado: EstadoCompra.pendiente,
       fecha: DateTime.now(),
@@ -39,7 +62,22 @@ class _PantallaComprasState extends State<PantallaCompras> {
     ModeloCompra(
       id: "COM-003",
       proveedor: "Lácteos del Norte",
-      insumos: "Mantequilla sin sal x20kg, Leche x50L",
+      items: [
+        ItemCompra(
+          insumo: "Mantequilla sin sal",
+          cantidad: 20,
+          unidad: "kg",
+          valorUnitario: 9000,
+          lote: LoteCompra(numero: "LOTE-MT004", cantidadDisponible: 20),
+        ),
+        ItemCompra(
+          insumo: "Leche",
+          cantidad: 50,
+          unidad: "L",
+          valorUnitario: 2800,
+          lote: LoteCompra(numero: "LOTE-MT005", cantidadDisponible: 50),
+        ),
+      ],
       total: 320000.0,
       estado: EstadoCompra.parcial,
       fecha: DateTime.now().subtract(const Duration(days: 3)),
@@ -49,7 +87,7 @@ class _PantallaComprasState extends State<PantallaCompras> {
   void _abrirNuevaCompra() {
     showAppBottomSheet(
       context,
-      title: 'Nueva compra',
+      title: 'Nueva Compra',
       builder: (_) => NuevaCompraSheet(
         onGuardar: (nuevaCompra) {
           setState(() {
@@ -82,11 +120,15 @@ class _PantallaComprasState extends State<PantallaCompras> {
   @override
   Widget build(BuildContext context) {
     final listaFiltrada = compras.where((item) {
+      // Antes: item.insumos (String). Ahora: item.resumenInsumos, calculado
+      // a partir de item.items.
       final coincideBusqueda =
           item.proveedor.toLowerCase().contains(
-                consultaBusqueda.toLowerCase(),
-              ) ||
-          item.insumos.toLowerCase().contains(consultaBusqueda.toLowerCase()) ||
+            consultaBusqueda.toLowerCase(),
+          ) ||
+          item.resumenInsumos.toLowerCase().contains(
+            consultaBusqueda.toLowerCase(),
+          ) ||
           item.id.toLowerCase().contains(consultaBusqueda.toLowerCase());
       final coincideEstado =
           estadoSeleccionado == null || item.estado == estadoSeleccionado;
@@ -96,9 +138,7 @@ class _PantallaComprasState extends State<PantallaCompras> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(
-            title: const Text("Gestión de Compras"),
-          ),
+          appBar: AppBar(title: const Text("Gestión de Compras")),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -108,7 +148,8 @@ class _PantallaComprasState extends State<PantallaCompras> {
                     Expanded(
                       child: AppSearchField(
                         placeholder: 'Buscar por proveedor o insumos...',
-                        onChanged: (val) => setState(() => consultaBusqueda = val),
+                        onChanged: (val) =>
+                            setState(() => consultaBusqueda = val),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -122,7 +163,9 @@ class _PantallaComprasState extends State<PantallaCompras> {
                 const SizedBox(height: 16),
                 Expanded(
                   child: listaFiltrada.isEmpty
-                      ? const Center(child: Text("No se encontraron registros."))
+                      ? const Center(
+                          child: Text("No se encontraron registros."),
+                        )
                       : ListView.builder(
                           itemCount: listaFiltrada.length,
                           itemBuilder: (context, index) {
@@ -136,7 +179,9 @@ class _PantallaComprasState extends State<PantallaCompras> {
                                   compra: item,
                                   onActualizarEstado: (compraActualizada) {
                                     setState(() {
-                                      final idx = compras.indexWhere((c) => c.id == compraActualizada.id);
+                                      final idx = compras.indexWhere(
+                                        (c) => c.id == compraActualizada.id,
+                                      );
                                       if (idx != -1) {
                                         compras[idx] = compraActualizada;
                                       }
@@ -183,7 +228,14 @@ class _NuevaCompraFab extends StatelessWidget {
             children: [
               Icon(Icons.add, size: 18, color: colors.accentFg),
               const SizedBox(width: 8),
-              Text('Nueva Compra', style: TextStyle(color: colors.accentFg, fontWeight: FontWeight.w600, fontSize: 14)),
+              Text(
+                'Nueva Compra',
+                style: TextStyle(
+                  color: colors.accentFg,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
             ],
           ),
         ),
