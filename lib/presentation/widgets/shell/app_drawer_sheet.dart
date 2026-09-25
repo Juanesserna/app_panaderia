@@ -15,6 +15,10 @@ void showAppDrawerSheet(BuildContext context, WidgetRef ref) {
   );
 }
 
+// Ocultos solo en este menú (no se tocan app_modules.dart ni el registro
+// global de módulos, para no afectar a otros compañeros que dependan de él).
+const _kModulosOcultos = {'Inventario', 'Reportes', 'Pedidos'};
+
 class _AppDrawerContent extends ConsumerWidget {
   final WidgetRef ref;
   const _AppDrawerContent({required this.ref});
@@ -24,10 +28,12 @@ class _AppDrawerContent extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppColors>()!;
     final current = ref.watch(currentModuleProvider);
 
+    final items = kAllNavItems.where((item) => !_kModulosOcultos.contains(item.label)).toList();
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       child: Column(
-        children: kAllNavItems.map((item) {
+        children: items.map((item) {
           final active = current == item.module;
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),

@@ -35,28 +35,31 @@ class ProduccionPage extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 96),
           children: [
             const SizedBox(height: 12),
-            SizedBox(
-              height: 96,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
                 children: [
-                  _KpiCard(
-                    label: 'En proceso',
-                    value: enProceso,
-                    icon: Icons.schedule,
-                    color: (c) => c.info,
+                  Expanded(
+                    child: _KpiCard(
+                      label: 'En proceso',
+                      value: enProceso,
+                      icon: Icons.schedule,
+                      color: (c) => c.info,
+                    ),
                   ),
-                  const SizedBox(width: 12),
-                  _KpiCard(
-                    label: 'Retrasadas',
-                    value: retrasadasCanceladas,
-                    icon: Icons.warning_amber_rounded,
-                    color: (c) => c.danger,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _KpiCard(
+                      label: 'Retrasadas',
+                      value: retrasadasCanceladas,
+                      icon: Icons.warning_amber_rounded,
+                      color: (c) => c.danger,
+                    ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
@@ -122,42 +125,31 @@ class _KpiCard extends StatelessWidget {
     final colors = Theme.of(context).extension<AppColors>()!;
     final c = color(colors);
     return Container(
-      width: 210,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: c.withOpacity(0.05),
-        border: Border.all(color: c.withOpacity(0.3)),
-        borderRadius: BorderRadius.circular(18),
+        color: c.withOpacity(0.10),
+        border: Border.all(color: c.withOpacity(0.35)),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                label.toUpperCase(),
-                style: AppTextStyles.tiny.copyWith(color: colors.textMuted, letterSpacing: 0.6),
-              ),
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: c.withOpacity(0.1),
-                  border: Border.all(color: c.withOpacity(0.2)),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, size: 14, color: c),
-              ),
-            ],
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(color: c.withOpacity(0.18), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, size: 18, color: c),
           ),
-          Text(
-            '$value',
-            style: AppTextStyles.monoBody.copyWith(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: colors.text,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: AppTextStyles.tiny.copyWith(color: colors.textMuted)),
+                Text(
+                  '$value',
+                  style: AppTextStyles.titleMd.copyWith(color: colors.text, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
         ],

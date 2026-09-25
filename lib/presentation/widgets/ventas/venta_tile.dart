@@ -5,7 +5,6 @@ import '../../../core/utils/currency_format.dart';
 import '../../../domain/entities/venta.dart';
 import 'venta_status_badge.dart';
 
-/// Una fila de la lista "Ventas recientes".
 class VentaTile extends StatelessWidget {
   final Venta venta;
   final VoidCallback onTap;
@@ -33,11 +32,14 @@ class VentaTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    venta.nit ?? venta.usuario,
+                    venta.cliente ?? venta.usuario,
                     style: AppTextStyles.bodyBold.copyWith(color: colors.text),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(venta.fecha, style: AppTextStyles.caption.copyWith(color: colors.textMuted)),
+                  Text(
+                    venta.nit != null ? '${venta.nit} · ${venta.fecha}' : venta.fecha,
+                    style: AppTextStyles.caption.copyWith(color: colors.textMuted),
+                  ),
                 ],
               ),
             ),
