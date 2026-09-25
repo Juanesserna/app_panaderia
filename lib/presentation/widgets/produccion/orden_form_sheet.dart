@@ -137,7 +137,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
         children: [
           // Encabezado con datos de la orden
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colors.surface2,
               border: Border.all(color: colors.border),
@@ -146,9 +146,9 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
             child: Column(
               children: [
                 _InfoRow(label: 'ID de orden', value: _formId, mono: true),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 _InfoRow(label: 'Fecha solicitud', value: _formFechaSolicitud),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 _InfoRow(
                   label: 'Fecha fabricación',
                   value: widget.esEdicion
@@ -157,34 +157,34 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                   italic: widget.esEdicion ? _fechaFabricacionPreview.isEmpty : true,
                 ),
                 if (!widget.esEdicion) ...[
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 10),
                   const _InfoRow(label: 'Estado', value: 'Pendiente'),
                 ],
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 _InfoRow(
                   label: widget.esEdicion && _ordenOriginal!.origen == OrigenOrden.pagina
                       ? 'Solicitado por'
                       : 'Generado por',
                   value: usuario.nombre,
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 _InfoRow(label: 'NIT/Cédula', value: usuario.documento),
               ],
             ),
           ),
 
           if (widget.esEdicion) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             _Label('ESTADO'),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             _EstadoDropdown(
               value: _estadoSeleccionado,
               onChanged: (v) => setState(() => _estadoSeleccionado = v),
             ),
             if (_ordenOriginal!.origen == OrigenOrden.pagina && _ordenOriginal!.ventaId != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                 decoration: BoxDecoration(
                   color: colors.surface2,
                   border: Border.all(color: colors.border),
@@ -201,22 +201,31 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                 ),
               ),
             ],
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
             const AppDivider(),
           ],
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           _Label('AGREGAR PRODUCTOS'),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Focus(
-            onFocusChange: (focused) => setState(() => _showProductoDropdown = focused),
+            onFocusChange: (focused) {
+              if (focused) {
+                setState(() => _showProductoDropdown = true);
+              } else {
+                // Da tiempo al onTap del dropdown para ejecutarse antes de ocultarlo
+                Future.delayed(const Duration(milliseconds: 150), () {
+                  if (mounted) setState(() => _showProductoDropdown = false);
+                });
+              }
+            },
             child: Container(
               decoration: BoxDecoration(
                 color: colors.surface2,
                 border: Border.all(color: colors.border),
                 borderRadius: BorderRadius.circular(14),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
               child: TextField(
                 controller: _productoBusquedaCtrl,
                 onChanged: (v) => setState(() {
@@ -226,6 +235,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                 style: AppTextStyles.bodyRegular.copyWith(color: colors.text),
                 decoration: InputDecoration(
                   isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   border: InputBorder.none,
                   hintText: 'Buscar producto...',
                   hintStyle: AppTextStyles.bodyRegular.copyWith(color: colors.textMuted),
@@ -246,7 +256,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                 borderRadius: BorderRadius.circular(14),
                 child: productosFiltrados.isEmpty
                     ? Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(14),
                         child: Text('Sin resultados',
                             style: AppTextStyles.caption.copyWith(color: colors.textMuted)),
                       )
@@ -263,7 +273,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                                   child: Container(
                                     color: _productoSeleccionado == p ? colors.border : null,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 10),
+                                        horizontal: 14, vertical: 14),
                                     child: Text(p,
                                         style:
                                             AppTextStyles.caption.copyWith(color: colors.text)),
@@ -275,7 +285,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                       ),
               ),
             ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 14),
           Row(
             children: [
               _StepperControl(value: _cantidad, onChanged: (v) => setState(() => _cantidad = v)),
@@ -289,14 +299,14 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
           _Label('RESUMEN'),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Container(
             width: double.infinity,
             constraints: const BoxConstraints(minHeight: 90),
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colors.surface2,
               border: Border.all(color: colors.border),
@@ -314,7 +324,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                     children: _items
                         .map(
                           (item) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Row(
                               children: [
                                 Expanded(
@@ -341,7 +351,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
                         .toList(),
                   ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           SizedBox(
             width: double.infinity,
@@ -350,7 +360,7 @@ class _OrdenFormSheetState extends ConsumerState<OrdenFormSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.accent,
                 foregroundColor: colors.accentFg,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               child: Text('Ordenar', style: AppTextStyles.bodyBold.copyWith(color: colors.accentFg)),
@@ -415,7 +425,7 @@ class _EstadoDropdown extends StatelessWidget {
         border: Border.all(color: colors.border),
         borderRadius: BorderRadius.circular(14),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<EstadoOrden>(
           value: value,
@@ -496,7 +506,7 @@ class _MiniButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: enabled ? onTap : null,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(border: Border.all(color: colors.border), borderRadius: BorderRadius.circular(12)),
           child: Opacity(
             opacity: enabled ? 1 : 0.5,
