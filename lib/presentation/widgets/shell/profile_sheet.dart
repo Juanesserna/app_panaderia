@@ -1,22 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_roles.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../riverpod/auth_providers.dart';
 import 'app_bottom_sheet.dart';
 import '../../pages/login_page.dart';
 
-/// Abre el bottom sheet de perfil. Los datos son estáticos por ahora (aún
-/// no hay backend); cuando exista un authProvider, reemplazar los valores
-/// fijos de _ProfileSheetContent por datos del usuario real.
+/// Abre el bottom sheet de perfil con los datos del usuario autenticado.
 void showProfileSheet(BuildContext context) {
   showAppBottomSheet(context, builder: (context) => const _ProfileSheetContent());
 }
 
-class _ProfileSheetContent extends StatelessWidget {
+class _ProfileSheetContent extends ConsumerWidget {
   const _ProfileSheetContent();
 
+  String _iniciales(String nombre) {
+    final partes = nombre.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (partes.isEmpty) return '?';
+    if (partes.length == 1) return partes.first.substring(0, 1).toUpperCase();
+    return (partes.first.substring(0, 1) + partes.last.substring(0, 1)).toUpperCase();
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppColors>()!;
+    final usuario = ref.watch(authProvider);
+
+    final nombre = usuario?.nombre ?? 'Invitado';
+    final rolLabel = usuario?.rol.label ?? 'Sin sesión';
+    final correo = usuario?.correo ?? '—';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -28,15 +41,15 @@ class _ProfileSheetContent extends StatelessWidget {
               CircleAvatar(
                 radius: 28,
                 backgroundColor: colors.accent,
-                child: Text('JD', style: AppTextStyles.titleMd.copyWith(color: colors.accentFg)),
+                child: Text(_iniciales(nombre), style: AppTextStyles.titleMd.copyWith(color: colors.accentFg)),
               ),
               const SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Juan Carlos Díaz', style: AppTextStyles.bodyBold.copyWith(color: colors.text)),
-                  Text('Administrador', style: AppTextStyles.caption.copyWith(color: colors.textMuted)),
-                  Text('jdiaz@alhorno.co', style: AppTextStyles.monoCaption.copyWith(color: colors.textMuted)),
+                  Text(nombre, style: AppTextStyles.bodyBold.copyWith(color: colors.text)),
+                  Text(rolLabel, style: AppTextStyles.caption.copyWith(color: colors.textMuted)),
+                  Text(correo, style: AppTextStyles.monoCaption.copyWith(color: colors.textMuted)),
                 ],
               ),
             ],
@@ -56,6 +69,7 @@ class _ProfileSheetContent extends StatelessWidget {
            color: colors.danger,
            bold: true,
            onTap: () {
+              ref.read(authProvider.notifier).logout();
               final navigator = Navigator.of(context);
               navigator.pop();
               navigator.pushAndRemoveUntil(
