@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_modules.dart';
+import '../../../core/constants/app_roles.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../riverpod/auth_providers.dart';
 import '../../riverpod/shell_providers.dart';
 import 'app_bottom_sheet.dart';
 
-/// Abre el bottom sheet "Menú Completo" con TODOS los módulos navegables.
+/// Abre el bottom sheet "Menú Completo" con los módulos navegables que el
+/// rol del usuario actual puede ver.
 void showAppDrawerSheet(BuildContext context, WidgetRef ref) {
   showAppBottomSheet(
     context,
@@ -15,8 +18,9 @@ void showAppDrawerSheet(BuildContext context, WidgetRef ref) {
   );
 }
 
-// Ocultos solo en este menú (no se tocan app_modules.dart ni el registro
-// global de módulos, para no afectar a otros compañeros que dependan de él).
+// Ocultos siempre en este menú, sin importar el rol (no se tocan
+// app_modules.dart ni el registro global de módulos, para no afectar a
+// otros compañeros que dependan de él).
 const _kModulosOcultos = {'Inventario', 'Reportes', 'Pedidos'};
 
 class _AppDrawerContent extends ConsumerWidget {
@@ -27,8 +31,27 @@ class _AppDrawerContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef _) {
     final colors = Theme.of(context).extension<AppColors>()!;
     final current = ref.watch(currentModuleProvider);
+    final usuario = ref.watch(authProvider);
 
-    final items = kAllNavItems.where((item) => !_kModulosOcultos.contains(item.label)).toList();
+    // Solo "todo lo demás" (kDrawerItems): los 4 tabs de abajo ya están
+    // siempre visibles en el bottom nav, no hace falta repetirlos aquí.
+    final items = kDrawerItems.where((item) {
+      if (_kModulosOcultos.contains(item.label)) return false;
+      if (usuario != null && !usuario.rol.modulosPermitidos.contains(item.module)) return false;
+      return true;
+    }).toList();
+
+    if (items.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        child: Center(
+          child: Text(
+            'No tienes más módulos disponibles',
+            style: AppTextStyles.caption.copyWith(color: colors.textMuted),
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),

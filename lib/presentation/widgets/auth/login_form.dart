@@ -1,14 +1,19 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_roles.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../riverpod/auth_providers.dart';
+import '../../riverpod/shell_providers.dart';
 import 'al_horno_field.dart';
 import 'primary_button.dart';
 
-/// Formulario de inicio de sesión. Por ahora es solo diseño: no valida
-/// contra ningún backend. Al presionar "INICIAR SESIÓN" simplemente avisa
-/// que fue "exitoso" vía [onLoginSuccess] (el AuthModal decide a dónde ir).
-class LoginForm extends StatefulWidget {
+/// Formulario de inicio de sesión. Valida contra los usuarios mock de
+/// [authProvider] (sin backend todavía). Al iniciar sesión correctamente,
+/// deja al usuario parado en el módulo inicial de su rol y llama
+/// [onLoginSuccess] (el AuthModal decide a dónde navegar).
+class LoginForm extends ConsumerStatefulWidget {
   final VoidCallback onGoToRegister;
   final VoidCallback onLoginSuccess;
 
@@ -19,14 +24,10 @@ class LoginForm extends StatefulWidget {
   });
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  ConsumerState<LoginForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
-  // Credenciales válidas mientras no haya backend real.
-  static const _correoValido = 'test@gmail.com';
-  static const _passwordValida = '123456';
-
+class _LoginFormState extends ConsumerState<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool obscurePassword = true;
@@ -40,11 +41,15 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _intentarLogin() {
-    final correo = _emailController.text.trim().toLowerCase();
+    final correo = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (correo == _correoValido && password == _passwordValida) {
+    final exito = ref.read(authProvider.notifier).login(correo, password);
+
+    if (exito) {
       setState(() => _errorText = null);
+      final usuario = ref.read(authProvider)!;
+      ref.read(currentModuleProvider.notifier).setModule(usuario.rol.moduloInicial);
       widget.onLoginSuccess();
     } else {
       setState(() => _errorText = 'Correo o contraseña incorrectos');
