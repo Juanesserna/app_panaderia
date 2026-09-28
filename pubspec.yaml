@@ -21,9 +21,18 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.15.1
   riverpod_generator: ^4.0.9
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/img/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/img/logo_claro.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/img/logo_claro.png"
+  remove_alpha_ios: true
