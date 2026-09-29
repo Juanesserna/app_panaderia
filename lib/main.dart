@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/theme/app_theme.dart';
+import 'presentation/riverpod/shell_providers.dart';
+import 'presentation/pages/splash_page.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: AlHornoApp()));
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class AlHornoApp extends ConsumerWidget {
+  const AlHornoApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    return MaterialApp(
+      title: 'AlHorno',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: themeMode,
+      home: const SplashPage(),
     );
   }
 }
